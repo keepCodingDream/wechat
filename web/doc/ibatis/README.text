@@ -1,0 +1,1 @@
+java -jar /Users/tracy/Documents/tools/ibator-plugin.jar -configfile ibator.xml -overwrite

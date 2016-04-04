@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ibatorConfiguration
+  PUBLIC "-//Apache Software Foundation//DTD Apache iBATIS Ibator Configuration 1.0//EN"
+  "http://ibatis.apache.org/dtd/ibator-config_1_0.dtd">
+
+<ibatorConfiguration>
+	<classPathEntry
+		location="/Users/tracy/.m2/repository/mysql/mysql-connector-java/5.1.35/mysql-connector-java-5.1.35.jar" />
+	<ibatorContext id="WeChat" targetRuntime="Ibatis2Java5">
+
+		<ibatorPlugin type="com.ximalaya.ibator.plugin.XmlyMysqlIbatorPlugin"></ibatorPlugin>
+		<ibatorPlugin type="org.apache.ibatis.ibator.plugins.SerializablePlugin"></ibatorPlugin>
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+			connectionURL="jdbc:mysql://127.0.0.1:3306/WeChat" userId="root"
+			password="123456">
+		</jdbcConnection>
+
+		<javaTypeResolver
+			type="com.ximalaya.ibator.plugin.XmlyIbatorJavaTypeResolverImpl">
+			<property name="forceBigDecimals" value="false" />
+		</javaTypeResolver>
+
+		<javaModelGenerator targetPackage="com.tracy.model"
+			targetProject="../../src/main/java">
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+
+		<sqlMapGenerator targetPackage="ibatis"
+			targetProject="../../src/main/resources">
+			<property name="useLegacyXMLIds" value="true" />
+		</sqlMapGenerator>
+
+		<daoGenerator type="SPRING" targetPackage="com.tracy.dao"
+			targetProject="../../src/main/java" implementationPackage="com.tracy.dao.impl">
+		</daoGenerator>
+
+		<table tableName="tb_user" domainObjectName="User">
+			<property name="runtimeSchema" value="WeChat" />
+		</table>
+
+		<table tableName="tb_recommend" domainObjectName="Recommend">
+			<property name="runtimeSchema" value="WeChat" />
+		</table>
+	</ibatorContext>
+</ibatorConfiguration>
