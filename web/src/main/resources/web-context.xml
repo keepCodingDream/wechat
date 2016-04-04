@@ -47,7 +47,6 @@
 				class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
 		</mvc:message-converters>
 	</mvc:annotation-driven>
-
 	<mvc:annotation-driven>
 		<mvc:message-converters register-defaults="true">
 			<!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->

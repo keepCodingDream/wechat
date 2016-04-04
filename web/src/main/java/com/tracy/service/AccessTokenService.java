@@ -21,11 +21,10 @@ public class AccessTokenService implements InitializingBean {
   public static final Logger LOG = LoggerFactory.getLogger(AccessTokenService.class);
   private LoadingCache<Integer, String> accessTokenCache;
   @Value("${appid}")
-  private static String appid;
+  private String appid;
   @Value("${secret}")
-  private static String secret;
-  private static final String REQUEST_ACCESS_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="
-      + appid + "&secret=" + secret;
+  private String secret;
+  private String REQUEST_ACCESS_URL = null;
 
   public String getAccessToken() {
     String result = null;
@@ -39,13 +38,15 @@ public class AccessTokenService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
+    REQUEST_ACCESS_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + appid
+        + "&secret=" + secret;
     accessTokenCache = CacheBuilder.newBuilder().maximumSize(1L).expireAfterWrite(30, TimeUnit.MINUTES)
         .build(new CacheLoader<Integer, String>() {
           @Override
           public String load(Integer key) throws Exception {
             String value = null;
             try {
-              LOG.info("Get access_token start");
+              LOG.info("Get access_token start url:{}", REQUEST_ACCESS_URL);
               byte[] result = HttpRequestUtil.getHttpsRequest(REQUEST_ACCESS_URL);
               if (result != null) {
                 try {

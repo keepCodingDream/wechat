@@ -2,6 +2,7 @@ package com.tracy.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
@@ -34,6 +35,7 @@ import com.alibaba.fastjson.JSONObject;
 @SuppressWarnings("deprecation")
 public class HttpRequestUtil {
   public static final Logger LOG = LoggerFactory.getLogger(HttpRequestUtil.class);
+  private static final String SEND_MESSAGE_URL = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=";
   private static HttpClient httpClient = new DefaultHttpClient();
   private static HttpClient httpClientForSSL = new DefaultHttpClient();
   static {
@@ -150,5 +152,24 @@ public class HttpRequestUtil {
       LOG.error("Upload fail!", e);
     }
     return mediaId;
+  }
+
+  /**
+   * 主动向用户发送消息
+   */
+  public static void sendTextMessageToUser(String userOpenid, String content, String TOKEN) {
+    try {
+      JSONObject object = new JSONObject();
+      object.put("touser", userOpenid);
+      object.put("msgtype", Constants.TEXT);
+      JSONObject messageJson = new JSONObject();
+      messageJson.put("content", content);
+      object.put("text", messageJson);
+      HttpResponse response = HttpRequestUtil.postJsonRequest(SEND_MESSAGE_URL + TOKEN, object.toJSONString());
+      HttpEntity entitys = response.getEntity();
+      LOG.info(EntityUtils.toString(entitys, Charset.forName("utf-8")));
+    } catch (Exception e) {
+      LOG.error("LOG send message result fail!", e);
+    }
   }
 }

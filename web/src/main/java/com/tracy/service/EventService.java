@@ -75,23 +75,26 @@ public class EventService {
       // 包涵此字段是扫描了带参数的二维码
       try {
         String[] indexes = eventKey.split("_");
+        int _id = Integer.valueOf(indexes[1]);
         LOG.info("Event key is:{},scene_id is:{}", eventKey, indexes[1]);
-        Map<String, String> recoMap = recommendService.queryRecommendCountByUid(Integer.valueOf(indexes[1]));
+        Map<String, String> recoMap = recommendService.queryRecommendCountByUid(_id);
         int count = Integer.valueOf(recoMap.get("size"));
         count++;
-        String fromOpenId = recoMap.get("openId");
+        String fromOpenId = recoMap.get("openId");// 推荐人openId
         StringBuilder builder = new StringBuilder();
         builder.append("你的好友:");
         builder.append(userDTO.getNickname());
-        builder.append("扫描了你的二维码加入社区。你已经成功推荐:");
+        builder.append(" 扫描了你的二维码加入社区。你已经成功推荐:");
         builder.append(count);
         if (count == 2) {
           builder.append("人。哈哈，谢谢你的推荐，活动是骗人的！～");
         } else {
-          builder.append("人。只需要推荐2人,即可活的神秘礼物哦，赶快行动吧！");
+          builder.append("人。只需要推荐2人,即可获得神秘礼物哦，赶快行动吧！");
         }
-        ResponseUtil.returnTextResponse(response, fromOpenId, inputMessage.getToUserName(), builder.toString());// TODO
-                                                                                                                // 定向发送消息，不是这个方法
+        // 发送提示消息
+        HttpRequestUtil.sendTextMessageToUser(fromOpenId, builder.toString(), accessTokenService.getAccessToken());
+        // 插入recommend
+        recommendService.insertRecommend(_id, fromOpenId, inputMessage.getFromUserName());
       } catch (Exception e) {
         LOG.error("Resolve recommend fail!", e);
       }
@@ -124,6 +127,8 @@ public class EventService {
     String mediaId = HttpRequestUtil.postHttpsPic(builder.toString(), file);
     if (!StringUtils.isEmpty(mediaId)) {
       ResponseUtil.returnPicResponse(response, inputMessage.getFromUserName(), inputMessage.getToUserName(), mediaId);
+      HttpRequestUtil.sendTextMessageToUser(inputMessage.getFromUserName(),
+          "将图中的二维码分享给好友，只要有超过2好友扫描了你的分享的二维码以后，我们会送你神秘礼物一份！", accessTokenService.getAccessToken());
     }
   }
 }

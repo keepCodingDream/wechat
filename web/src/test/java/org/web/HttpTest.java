@@ -38,7 +38,8 @@ public class HttpTest {
     // tickets = testGeneratePic();
     // getPicByTicket();
     // uploadPIC();
-    addKefu();
+    // addKefu();
+    sendMessage();
   }
 
   public static String testGeneratePic() {
@@ -117,11 +118,11 @@ public class HttpTest {
   }
 
   public static void addKefu() {
-    String url = "https://api.weixin.qq.com/customservice/kfaccount/add?access_token=E-7GgpcNgtTEBoKBfUcTbhcifNc7CkxsOMOcV5KkgdCYsm-dp_pZ9JAU1SU4h5yVSAFx0hhZJNL2zNo4vYsQcHkQJ9WWDZiDDIhZD5BFhNakwULvyy3uibO6dZOndoBZREXeAEAVIB";
+    String url = "https://api.weixin.qq.com/customservice/kfaccount/add?access_token=OvqURYiGLOMWz3mggxobXJVbXj5XRsE8zIiAjLY7pjT-r8o-aO-CXrQdwLdL5eDElJYPnoo0dJiTbBcXzAJd4YZp2GI0cmrxA906An9ccjNHPUUrihc6bDNyA9MG45BWYGBeACAFNI";
     JSONObject object = new JSONObject();
     object.put("kf_account", "test@gh_912e6e2b8e32");
     object.put("nickname", "Tracy");
-    object.put("password", "e10adc3949ba59abbe56e057f20f883e");
+    object.put("password", "B8DE6B4E113223FF51674B619451E534");
     System.out.println(object.toJSONString());
     HttpResponse response = HttpRequestUtil.postJsonRequest(url, object.toJSONString());
     HttpEntity entitys = response.getEntity();
@@ -132,6 +133,25 @@ public class HttpTest {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
 
+  public static void sendMessage() {
+    String url = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=OvqURYiGLOMWz3mggxobXJVbXj5XRsE8zIiAjLY7pjT-r8o-aO-CXrQdwLdL5eDElJYPnoo0dJiTbBcXzAJd4YZp2GI0cmrxA906An9ccjNHPUUrihc6bDNyA9MG45BWYGBeACAFNI";
+    JSONObject object = new JSONObject();
+    object.put("touser", "oZkAlwkjysph070ptslJgk7ao-YY");
+    object.put("msgtype", "text");
+    JSONObject messageJson = new JSONObject();
+    messageJson.put("content", "Hello World");
+    object.put("text", messageJson);
+    System.out.println(object.toJSONString());
+    HttpResponse response = HttpRequestUtil.postJsonRequest(url, object.toJSONString());
+    HttpEntity entitys = response.getEntity();
+    try {
+      System.out.println(EntityUtils.toString(entitys, Charset.forName("utf-8")));
+    } catch (ParseException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }

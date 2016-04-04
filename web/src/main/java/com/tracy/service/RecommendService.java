@@ -31,9 +31,11 @@ public class RecommendService {
     example.createCriteria().andFromIdEqualTo(uid);
     List<Recommend> recommends = crudRecommendDao.selectByExample(example);
     if (recommends != null && recommends.size() > 0) {
+      // 如果该用户之前推荐过，直接拿出fromId
       response.put("size", String.valueOf(recommends.size()));
       response.put("openId", recommends.get(0).getFromOpenId());
     } else {
+      // 如果该用户之前没有推荐过，查用户表拿openId
       response.put("size", "0");
       User user = crudUserDao.selectByPrimaryKey((long) uid);
       response.put("openId", user.getOpenid());
