@@ -81,18 +81,20 @@ public class EventService {
         int count = Integer.valueOf(recoMap.get("size"));
         count++;
         String fromOpenId = recoMap.get("openId");// 推荐人openId
-        StringBuilder builder = new StringBuilder();
-        builder.append("你的好友:");
-        builder.append(userDTO.getNickname());
-        builder.append(" 扫描了你的二维码加入社区。你已经成功推荐:");
-        builder.append(count);
-        if (count == 2) {
-          builder.append("人。哈哈，谢谢你的推荐，活动是骗人的！～");
-        } else {
-          builder.append("人。只需要推荐2人,即可获得神秘礼物哦，赶快行动吧！");
+        if (count < 3) {
+          StringBuilder builder = new StringBuilder();
+          builder.append("你的好友:");
+          builder.append(userDTO.getNickname());
+          builder.append(" 扫描了你的二维码加入社区。你已经成功推荐:");
+          builder.append(count);
+          if (count == 2) {
+            builder.append("人。哈哈，谢谢你的推荐，活动是骗人的！～");
+          } else {
+            builder.append("人。只需要推荐2人,即可获得神秘礼物哦，赶快行动吧！");
+          }
+          // 发送提示消息
+          HttpRequestUtil.sendTextMessageToUser(fromOpenId, builder.toString(), accessTokenService.getAccessToken());
         }
-        // 发送提示消息
-        HttpRequestUtil.sendTextMessageToUser(fromOpenId, builder.toString(), accessTokenService.getAccessToken());
         // 插入recommend
         recommendService.insertRecommend(_id, fromOpenId, inputMessage.getFromUserName());
       } catch (Exception e) {
