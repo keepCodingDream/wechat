@@ -82,6 +82,7 @@ public class EventService {
         count++;
         String fromOpenId = recoMap.get("openId");// 推荐人openId
         if (count < 3) {
+          // TODO 返回的消息做到可配置
           StringBuilder builder = new StringBuilder();
           builder.append("你的好友:");
           builder.append(userDTO.getNickname());
@@ -116,6 +117,8 @@ public class EventService {
       return;// ticket为空，生成二维码失败，不返回。
     }
     LOG.info("Tickets after encode is {}", tickts);
+    // 根据ticket生成图片
+    // TODO 需改进的方法，不用在本地生成一遍，等到美化图片时修改
     byte picByte[] = HttpRequestUtil.getHttpsRequest(REQUEST_PIC_BY_TICKET_URL + tickts);
     String picFile = pictureService.savePictureOfTicket(picByte);
     if (StringUtils.isEmpty(picFile)) {
@@ -129,6 +132,7 @@ public class EventService {
     String mediaId = HttpRequestUtil.postHttpsPic(builder.toString(), file);
     if (!StringUtils.isEmpty(mediaId)) {
       ResponseUtil.returnPicResponse(response, inputMessage.getFromUserName(), inputMessage.getToUserName(), mediaId);
+      // TODO 返回的消息做到可配置
       HttpRequestUtil.sendTextMessageToUser(inputMessage.getFromUserName(),
           "将图中的二维码分享给好友，只要有超过2好友扫描了你的分享的二维码以后，我们会送你神秘礼物一份！", accessTokenService.getAccessToken());
     }
